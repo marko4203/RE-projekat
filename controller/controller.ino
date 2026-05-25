@@ -1,8 +1,8 @@
 #include <WiFi.h>
 #include <WebServer.h>
 
-const char* ssid = "ssid"; //podesiti
-const char* password = "pass"; //podesiti
+const char* ssid = "HORSTMANN"; //podesiti
+const char* password = "3141592653"; //podesiti
 
 WebServer server(80);
 
@@ -56,6 +56,9 @@ void setup() {
     delay(500);
   } 
   Serial.println();
+  Serial.print("http://");
+  Serial.print(WiFi.localIP());
+  Serial.println("/ctrl");
 
   server.on("/ctrl", handleCtrl);
   server.begin();
@@ -67,7 +70,7 @@ control previous = Idle;
 void loop() {
   state = readController();
   controllerCode = (int) state;
-  Serial.println(controllerCode);
+  //Serial.println(controllerCode);
 
   server.handleClient();
   /*if(state != previous){
