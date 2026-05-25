@@ -1,3 +1,11 @@
+#include <WiFi.h>
+#include <WebServer.h>
+
+const char* ssid = "ssid"; //podesiti
+const char* password = "pass"; //podesiti
+
+WebServer server(80);
+
 typedef enum{
   Idle,
   Up,
@@ -10,10 +18,16 @@ typedef enum{
   UpLeft
 } control;
 
+int controllerCode = 0;
+
+void handleCtrl() {
+  server.send(200, "text/plain", String(controllerCode));
+}
+
 control readController(){
   int x,y;
-  x = analogRead(10);
-  y = analogRead(11);
+  x = analogRead(4);
+  y = analogRead(5);
 
   if(x < 2500 && x > 1500 && y < 500){return Up;}
   if(x < 2500 && x > 1500 && y > 2500){return Down;}
@@ -32,9 +46,19 @@ control readController(){
 }
 
 void setup() {
-  pinMode(10, INPUT);
-  pinMode(11, INPUT);
+  pinMode(4, INPUT);
+  pinMode(5, INPUT);
   Serial.begin(115200);
+
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED){
+    Serial.print(".");
+    delay(500);
+  } 
+  Serial.println();
+
+  server.on("/ctrl", handleCtrl);
+  server.begin();
 }
 
 control state;
@@ -42,9 +66,13 @@ control previous = Idle;
 
 void loop() {
   state = readController();
-  if(state != previous){
+  controllerCode = (int) state;
+  Serial.println(controllerCode);
+
+  server.handleClient();
+  /*if(state != previous){
     previous = state;
-    switch(state){
+    (switch(state){
       case Idle: break;
       case Up: Serial.println("Up"); break;
       case UpRight: Serial.println("UpRight"); break;
@@ -56,6 +84,6 @@ void loop() {
       case UpLeft: Serial.println("UpLeft"); break;
       default: break;
     }
-  }
+  }*/
   delay(5);
 }
