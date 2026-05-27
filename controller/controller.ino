@@ -1,8 +1,8 @@
 #include <WiFi.h>
 #include <WebServer.h>
 
-const char* ssid = "HORSTMANN"; //podesiti
-const char* password = "3141592653"; //podesiti
+const char* ssid = "FTN_wifi"; //podesiti
+const char* password = "ftn12345"; //podesiti
 
 WebServer server(80);
 
@@ -88,5 +88,4 @@ void loop() {
       default: break;
     }
   }*/
-  delay(5);
 }
